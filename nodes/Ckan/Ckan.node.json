@@ -1,0 +1,9 @@
+{
+	"node": "@ondics/n8n-nodes-ckan",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Development", "Data & Storage", "ckan", "open data"],
+	"resources": {
+		"primaryDocumentation": "https://github.com/ondics/n8n-nodes-ckan?tab=readme-ov-file"
+	}
+}
