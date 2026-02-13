@@ -1,13 +1,13 @@
 # n8n-nodes-ckan
 
-This node lets you interact with the CKAN API directly in n8n workflows.
+This n8n node lets you interact with the CKAN API directly in n8n workflows.
 
 [n8n](https://n8n.io/) is a workflow automation platform.
 [CKAN](https://ckan.org/) is an open-source data portal platform.
 
 Tested with:
-* **n8n** v1.x.x
-* **ckan** 2.11.x
+* **n8n** v2.7.4
+* **ckan** 2.11.4
 
 ## Installation
 
@@ -46,8 +46,8 @@ See the [CKAN API docs](https://docs.ckan.org/en/latest/api/) for reference.
 
 ## Credits
 Credits apply to the valuable work of:
-* n8n
-* CKAN
+* [n8n](https://n8n.io)
+* [CKAN](https://ckan.org)
 
 ## Author
 
