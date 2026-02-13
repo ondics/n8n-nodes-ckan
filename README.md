@@ -31,7 +31,8 @@ See the [CKAN API docs](https://docs.ckan.org/en/latest/api/) for reference.
 1. Just enter the CKAN URL
 2. Select the CKAN API function
 3. The required and optional parameters will be shown
-4. Heads up: package_search and datastore_search return paged results (max 1000). To get the next 1000, use the offset parameter.
+
+**Heads up**: package_search and datastore_search return paged results (max 1000). To get the next 1000, use the offset parameter.
 
 ## Resources
 
