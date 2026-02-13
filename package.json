@@ -1,5 +1,5 @@
 {
-	"name": "@ondics/n8n-nodes-ckan",
+	"name": "n8n-nodes-ckan",
 	"version": "1.0.0",
 	"description": "n8n community node for CKAN Open Data portals",
 	"license": "MIT",

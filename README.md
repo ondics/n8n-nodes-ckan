@@ -1,16 +1,24 @@
-# @ondics/n8n-nodes-ckan
+# n8n-nodes-ckan
 
-This is an n8n community node for [CKAN](https://ckan.org/) - the world's leading Open Source data portal platform.
+This node lets you interact with the CKAN API directly in n8n workflows.
 
-[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
+[n8n](https://n8n.io/) is a workflow automation platform.
+[CKAN](https://ckan.org/) is an open-source data portal platform.
 
-[Installation](#installation) | [Operations](#operations) | [Compatibility](#compatibility) | [Resources](#resources)
+Tested with:
+* **n8n** v1.x.x
+* **ckan** 2.11.x
 
 ## Installation
 
 Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
 
-## Operations
+## Features
+
+Read access to CKAN, CKAN API functions.
+
+This is a list of the features this node offers. All features require **no** API key or credentials.
+See the [CKAN API docs](https://docs.ckan.org/en/latest/api/) for reference.
 
 - **Package Search** - Search datasets with filters, facets, and sorting
 - **Package Show** - Get details of a specific dataset by ID
@@ -19,14 +27,11 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 - **Organization Show** - Get details of an organization
 - **Status Show** - Check CKAN instance status
 
-## Credentials
-
-No credentials required for public CKAN APIs. Simply provide the CKAN instance URL (e.g., `https://demo.ckan.org`).
-
-## Compatibility
-
-- Tested with n8n version 1.x
-- Tested with CKAN 2.9+ instances
+## Usage
+1. Just enter the CKAN URL
+2. Select the CKAN API function
+3. The required and optional parameters will be shown
+4. Heads up: package_search and datastore_search return paged results (max 1000). To get the next 1000, use the offset parameter.
 
 ## Resources
 
@@ -38,7 +43,11 @@ No credentials required for public CKAN APIs. Simply provide the CKAN instance U
 
 [MIT](LICENSE)
 
+## Credits
+Credits apply to the valuable work of:
+* n8n
+* CKAN
 
 ## Author
 
-(C) 2025, Ondics GmbH, https://ondics.de/
+(C) 2026, Ondics GmbH, https://ondics.de/
