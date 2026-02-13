@@ -13,7 +13,7 @@ export class Ckan implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'CKAN',
 		name: 'ckan',
-		icon: { light: 'file:ckan.png', dark: 'file:ckan.png' },
+		icon: { light: 'file:ckan.svg', dark: 'file:ckan.dark.svg' },
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
