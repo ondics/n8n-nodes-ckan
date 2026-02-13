@@ -1,6 +1,6 @@
 {
-	"node": "@ondics/n8n-nodes-ckan",
-	"nodeVersion": "1.0",
+	"node": "n8n-nodes-ckan",
+	"nodeVersion": "1.0.0",
 	"codexVersion": "1.0",
 	"categories": ["Development", "Data & Storage", "ckan", "open data"],
 	"resources": {
