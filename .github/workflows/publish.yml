@@ -95,7 +95,7 @@ jobs:
         # Option B (token): set NPM_TOKEN in repo secrets — it is written to
         #   .npmrc here before publishing.
         run: |
-          [ -n "$NPM_TOKEN" ] && npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+          [ -n "$NODE_AUTH_TOKEN" ] && npm config set //registry.npmjs.org/:_authToken "$NODE_AUTH_TOKEN"
           npm run release
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
