@@ -1,13 +1,45 @@
 import {
+	IDataObject,
 	IExecuteFunctions,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	JsonObject,
+	NodeApiError,
 	NodeConnectionTypes,
 	NodeOperationError,
 } from 'n8n-workflow';
-import { ckanNodeProperties } from './CkanProperties';
-import { buildRequest, healthCheck, ckanApiRequest, normalizeUrl } from './actions';
+import { getOperation } from './actions/operations';
+import { buildNodeProperties, operationOptions } from './actions/properties';
+import { buildRequest } from './actions/request';
+import { ckanApiRequest, healthCheck } from './actions/transport';
+
+const trimUrl = (url: string) => url.replace(/\/+$/, '');
+
+type CkanCredentials = {
+	authToken?: string;
+	authHeaderName: string;
+};
+
+const CREDENTIALS_NOT_FOUND = ['not found', 'No credentials found'];
+
+async function loadCredentials(ctx: IExecuteFunctions): Promise<CkanCredentials> {
+	try {
+		const creds = (await ctx.getCredentials('ckanApi')) as {
+			apiToken?: string;
+			authorizationHeaderName?: string;
+		};
+		return {
+			authToken: creds.apiToken,
+			authHeaderName: creds.authorizationHeaderName || 'Authorization',
+		};
+	} catch (error) {
+		const message = (error as Error).message || '';
+		const isMissingCredentials = CREDENTIALS_NOT_FOUND.some((s) => message.includes(s));
+		if (!isMissingCredentials) throw error;
+		return { authToken: undefined, authHeaderName: 'Authorization' };
+	}
+}
 
 export class Ckan implements INodeType {
 	description: INodeTypeDescription = {
@@ -19,7 +51,12 @@ export class Ckan implements INodeType {
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'Interact with the CKAN API',
 		defaults: { name: 'CKAN' },
-		credentials: [],
+		credentials: [
+			{
+				name: 'ckanApi',
+				required: false,
+			},
+		],
 		usableAsTool: true,
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
@@ -32,9 +69,17 @@ export class Ckan implements INodeType {
 				validateType: 'url',
 				required: true,
 				default: '',
-				placeholder: 'https://ckan.example.com',
+				placeholder: 'https://demo.ckan.org',
 			},
-			...ckanNodeProperties,
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				options: operationOptions,
+				default: 'package_search',
+			},
+			...buildNodeProperties(),
 		],
 	};
 
@@ -42,41 +87,74 @@ export class Ckan implements INodeType {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
 
+		const opKey = this.getNodeParameter('operation', 0) as string;
+		const operation = getOperation(opKey);
+		if (!operation) throw new NodeOperationError(this.getNode(), `Unknown operation: ${opKey}`);
+
+		const ckanUrls = items.map((_data, index) =>
+			trimUrl(this.getNodeParameter('ckanUrl', index) as string),
+		);
+
+		const {
+			authToken,
+			authHeaderName,
+		}: CkanCredentials =
+			operation.method === 'POST'
+				? await loadCredentials(this)
+				: { authToken: undefined, authHeaderName: 'Authorization' };
+
+		if (operation.method === 'POST' && !authToken) {
+			throw new NodeOperationError(
+				this.getNode(),
+				'This operation requires CKAN credentials (API token).',
+			);
+		}
+
+		const checkedUrls = new Set<string>();
+
 		for (let i = 0; i < items.length; i++) {
 			try {
-				const operation = this.getNodeParameter('operation', i) as string;
-				const ckanUrl = this.getNodeParameter('ckanUrl', i) as string;
-				const normalizedCkanUrl = normalizeUrl(ckanUrl);
+				if (!checkedUrls.has(ckanUrls[i])) {
+					await healthCheck(this, operation, ckanUrls[i]);
+					checkedUrls.add(ckanUrls[i]);
+				}
 
-				await healthCheck(this, operation, normalizedCkanUrl);
+				const req = buildRequest(this, operation, i);
 
-				const getParam = (name: string) => this.getNodeParameter(name, i, '');
-				const req = buildRequest(this, operation, getParam);
-
-				const response = await ckanApiRequest.call(
+				const response = await ckanApiRequest(
 					this,
 					req.method,
-					req.endpoint,
+					opKey,
+					ckanUrls[i],
 					req.body,
 					req.qs,
-					normalizedCkanUrl,
+					authToken,
+					authHeaderName,
 				);
-				if (!response?.success) {
+
+				if (!response.success) {
 					throw new NodeOperationError(
 						this.getNode(),
-						response?.error?.message ?? 'CKAN request failed',
+						response.error?.message ?? 'CKAN request failed',
 					);
 				}
+
 				returnData.push({
-					json: { success: true, data: response.result as object },
+					json: { success: true, data: response.result as IDataObject },
 					pairedItem: { item: i },
 				});
 			} catch (error) {
 				if (this.continueOnFail()) {
-					returnData.push({ json: { error: (error as Error).message }, pairedItem: { item: i } });
+					returnData.push({
+						json: { error: error instanceof Error ? error.message : String(error) },
+						pairedItem: { item: i },
+					});
 					continue;
 				}
-				throw error;
+				if (error instanceof NodeApiError || error instanceof NodeOperationError) {
+					throw error;
+				}
+				throw new NodeApiError(this.getNode(), error as JsonObject);
 			}
 		}
 

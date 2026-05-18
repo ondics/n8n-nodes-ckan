@@ -37,6 +37,9 @@
 		"strict": true,
 		"nodes": [
 			"dist/nodes/Ckan/Ckan.node.js"
+		],
+		"credentials": [
+			"dist/credentials/CKAN.credentials.js"
 		]
 	},
 	"devDependencies": {
