@@ -39,7 +39,7 @@
 			"dist/nodes/Ckan/Ckan.node.js"
 		],
 		"credentials": [
-			"dist/credentials/CKAN.credentials.js"
+			"dist/credentials/CkanApi.credentials.js"
 		]
 	},
 	"devDependencies": {

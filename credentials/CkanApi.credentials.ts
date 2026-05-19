@@ -1,12 +1,11 @@
 import type { ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
 
-export class Ckan implements ICredentialType {
+export class CkanApi implements ICredentialType {
 	name = 'ckanApi';
-
 	displayName = 'CKAN API';
-
 	documentationUrl =
 		'https://docs.ckan.org/en/latest/maintaining/configuration.html#api-token-settings';
+	icon: ICredentialType['icon'] = { light: 'file:ckan.svg', dark: 'file:ckan.dark.svg' };
 
 	properties: INodeProperties[] = [
 		{
@@ -37,7 +36,6 @@ export class Ckan implements ICredentialType {
 				'The HTTP header used to send your API token. Defaults to "Authorization". Only change this if your CKAN instance has been configured with a custom apitoken_header_name.',
 		},
 	];
-
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL: '={{$credentials.ckanUrl.replace(/\\/+$/, "")}}',
