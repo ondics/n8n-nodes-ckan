@@ -4,7 +4,6 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	JsonObject,
 	NodeApiError,
 	NodeConnectionTypes,
 	NodeOperationError,
@@ -36,7 +35,7 @@ async function loadCredentials(ctx: IExecuteFunctions): Promise<CkanCredentials>
 	} catch (error) {
 		const message = (error as Error).message || '';
 		const isMissingCredentials = CREDENTIALS_NOT_FOUND.some((s) => message.includes(s));
-		if (!isMissingCredentials) throw error;
+		if (!isMissingCredentials) throw new NodeOperationError(ctx.getNode(), error);
 		return { authToken: undefined, authHeaderName: 'Authorization' };
 	}
 }
@@ -95,10 +94,7 @@ export class Ckan implements INodeType {
 			trimUrl(this.getNodeParameter('ckanUrl', index) as string),
 		);
 
-		const {
-			authToken,
-			authHeaderName,
-		}: CkanCredentials =
+		const { authToken, authHeaderName }: CkanCredentials =
 			operation.method === 'POST'
 				? await loadCredentials(this)
 				: { authToken: undefined, authHeaderName: 'Authorization' };
@@ -152,9 +148,10 @@ export class Ckan implements INodeType {
 					continue;
 				}
 				if (error instanceof NodeApiError || error instanceof NodeOperationError) {
+					// eslint-disable-next-line @n8n/community-nodes/require-node-api-error
 					throw error;
 				}
-				throw new NodeApiError(this.getNode(), error as JsonObject);
+				throw new NodeOperationError(this.getNode(), error as Error);
 			}
 		}
 
