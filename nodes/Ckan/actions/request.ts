@@ -56,9 +56,16 @@ export function buildRequest(ctx: IExecuteFunctions, op: Operation, itemIndex: n
 		data[name] = value;
 	}
 
+	const qs: IDataObject = {};
+	if (op.method === 'GET') {
+		for (const [key, value] of Object.entries(data)) {
+			qs[key] = typeof value === 'object' && value !== null ? JSON.stringify(value) : value;
+		}
+	}
+
 	return {
 		method: op.method,
-		qs: op.method === 'GET' ? data : empty,
+		qs: op.method === 'GET' ? qs : empty,
 		body: op.method === 'POST' ? data : empty,
 	};
 }

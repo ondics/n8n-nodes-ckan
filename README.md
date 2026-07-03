@@ -15,42 +15,81 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Features
 
-Read access to CKAN, CKAN API functions.
-
-This is a list of the features this node offers. Read-only features require **no** API key or credentials.
-Write operations require a CKAN API token (set in the credentials).
+Read-only operations require **no** API token. Write operations require a CKAN API token set in the credentials.
 See the [CKAN API docs](https://docs.ckan.org/en/latest/api/) for reference.
 
+### Read operations (no API token required)
+
+**Packages (Datasets)**
 - **Status Show** - Check CKAN instance status
-- **Package List** - Return a list of the names of the site’s datasets (packages)
-- **Package Search** - Search datasets with filters, facets, and sorting
-- **Package Show** - Get details of a specific dataset by ID
-- **Package Activity List** - Return the activity stream for a dataset
-- **Recently Changed Packages Activity List** - Return activity stream of all recently created or updated datasets
-- **Resource Show** - Get details of a specific resource by ID
-- **Resource Search** - Search for resources across all public datasets by field values
-- **Datastore Search** - Query data from a DataStore resource
-- **Organization List** - Return a list of organization names on the CKAN instance
-- **Organization Show** - Get details of an organization
-- **Group List** - Return a list of group names on the CKAN instance
-- **Tag List** - Return a list of tags used by datasets
+- **Package List** - List all dataset names on the instance
+- **Package Search** - Search datasets with Solr query, filters, facets and sorting
+- **Package Show** - Get full metadata of a dataset by ID or name
+- **Package Activity List** - Activity stream for a dataset
+- **Recently Changed Packages Activity List** - Site-wide activity stream of recently modified datasets
 
-Write operations (API token required):
+**Resources**
+- **Resource Show** - Get metadata of a single resource by ID
+- **Resource Search** - Search resources across all public datasets by field values
 
+**DataStore**
+- **Datastore Search** - Query rows in a DataStore resource with filters, full-text search, sorting and pagination
+
+**Organizations**
+- **Organization List** - List organization names (or full objects) on the instance
+- **Organization Show** - Get full details of an organization
+
+**Groups**
+- **Group List** - List group names (or full objects) on the instance
+- **Group Show** - Get full details of a group
+- **Group Activity List** - Activity stream for a group
+- **Group Package Show** - List datasets belonging to a group
+
+**Users & Tags**
+- **User List** - List users on the instance
+- **Tag List** - List tags used by datasets, optionally filtered by vocabulary
+
+### Write operations (API token required)
+
+**Packages (Datasets)**
 - **Package Create** - Create a new dataset
-- **Package Patch** - Partially update a dataset
+- **Package Update** - Fully replace an existing dataset
+- **Package Patch** - Partially update a dataset (only provided fields change)
 - **Package Delete** - Soft-delete a dataset
-- **Resource Create** - Add a new resource
+
+**Resources**
+- **Resource Create** - Add a new resource to a dataset
+- **Resource Update** - Fully replace an existing resource
 - **Resource Patch** - Partially update a resource
-- **Datastore Create** - Create or replace a DataStore table
-- **Datastore Upsert** - Insert or update DataStore records
+
+**DataStore**
+- **Datastore Create** - Create or replace a DataStore table with optional schema
+- **Datastore Upsert** - Insert or update rows in a DataStore table
+
+**Groups**
+- **Group Create** - Create a new group
+- **Group Update** - Fully replace a group
+- **Group Patch** - Partially update a group
+- **Group Delete** - Soft-delete a group
+- **Group Purge** - Permanently delete a group (sysadmin only)
+- **Group Member Create** - Add a user to a group or update their role
+- **Group Member Delete** - Remove a user from a group
+
+**Organizations**
+- **Organization Create** - Create a new organization
+- **Organization Update** - Fully replace an organization
+- **Organization Patch** - Partially update an organization
+- **Organization Delete** - Soft-delete an organization
+- **Organization Purge** - Permanently delete an organization (sysadmin only)
+- **Organization Member Create** - Add a user to an organization or update their role
+- **Organization Member Delete** - Remove a user from an organization
 
 ## Usage
 1. Just enter the CKAN URL
 2. Select the CKAN API function
 3. The required and optional parameters will be shown
 
-**Heads up**: package_search and datastore_search return paged results (max 1000). To get the next 1000, use the offset parameter.
+**Heads up**: `package_search` returns paged results (max 1000 per request). `datastore_search` returns up to 32 000 rows per request. Use the `offset` parameter to paginate.
 
 ## Resources
 
