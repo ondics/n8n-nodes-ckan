@@ -1,6 +1,6 @@
 {
-	"node": "n8n-nodes-ckan",
-	"nodeVersion": "1.0.0",
+	"node": "n8n-nodes-ckan.ckan",
+	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
 	"categories": ["Development", "Data & Storage", "Analytics", "Utility"],
 	"resources": {
