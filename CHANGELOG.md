@@ -1,5 +1,12 @@
 ### Changelog
 
+#### [1.3.1](https://github.com/ondics/n8n-nodes-ckan/compare/1.3.0...1.3.1)
+
+> 9 July 2026
+
+- fix: codex `node` identifier now fully-qualified (`n8n-nodes-ckan.ckan`) to pass n8n node lint
+- fix: codex `nodeVersion` set to schema value `1.0` (not `1.0.0`)
+
 #### [1.3.0](https://github.com/ondics/n8n-nodes-ckan/compare/1.2.0...1.3.0)
 
 > 3 July 2026
